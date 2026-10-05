@@ -1,0 +1,62 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="StudyDesk.Desktop.MainWindow"
+        Title="Estúdio · Seu espaço de estudo" Width="1440" Height="860"
+        MinWidth="1080" MinHeight="700" Background="#090A0C" FontFamily="Segoe UI"
+        Icon="avares://StudyDesk.Desktop/Assets/estudio.ico">
+  <Grid ColumnDefinitions="246,*">
+    <Border Grid.Column="0" Background="#0D0F12" BorderBrush="#292E36" BorderThickness="0,0,1,0" Padding="18,28">
+      <Grid RowDefinitions="Auto,Auto,Auto,*,Auto">
+        <StackPanel Spacing="4">
+          <TextBlock Text="◆  ESTÚDIO" Foreground="#91A0FF" FontSize="21" FontWeight="Bold" />
+          <TextBlock Text="Aprenda hoje. Avance sempre." Foreground="#A6ADB8" FontSize="12" Margin="30,0,0,0" />
+        </StackPanel>
+        <Button Grid.Row="1" x:Name="NewProjectButton" Content="＋  Novo projeto" Margin="0,30,0,20"
+                Background="#435BD8" Foreground="White" FontWeight="Bold" HorizontalAlignment="Stretch" />
+        <StackPanel Grid.Row="2" Spacing="5" Margin="0,0,0,22">
+          <Button x:Name="HomeButton" Content="⌂   Início" HorizontalContentAlignment="Left" />
+          <Button x:Name="TrailButton" Content="▤   Trilha" HorizontalContentAlignment="Left" />
+          <Button x:Name="ReviewButton" Content="◇   Revisão" HorizontalContentAlignment="Left" />
+          <Button x:Name="ProgressButton" Content="▥   Progresso" HorizontalContentAlignment="Left" />
+          <Button x:Name="TutorButton" Content="✦   Tutor IA" HorizontalContentAlignment="Left" />
+          <Button x:Name="FocusButton" Content="◷   Foco" HorizontalContentAlignment="Left" />
+        </StackPanel>
+        <ScrollViewer Grid.Row="3">
+          <StackPanel Spacing="12">
+            <TextBlock Text="SEUS PROJETOS" Foreground="#A6ADB8" FontSize="11" FontWeight="Bold" LetterSpacing="2" />
+            <StackPanel x:Name="ProjectList" Spacing="6" />
+          </StackPanel>
+        </ScrollViewer>
+        <StackPanel Grid.Row="4" Spacing="8">
+          <Button x:Name="ProviderButton" Content="⚙  Conexões de IA" HorizontalAlignment="Stretch" />
+          <TextBlock Text="Progresso salvo neste computador, com backup diário automático. · v1.2" Foreground="#A6ADB8" FontSize="11" TextWrapping="Wrap" />
+        </StackPanel>
+      </Grid>
+    </Border>
+    <Grid Grid.Column="1" RowDefinitions="Auto,Auto,*">
+      <Border Background="#0D0F12" BorderBrush="#292E36" BorderThickness="0,0,0,1" Padding="32,20">
+        <Grid ColumnDefinitions="*,Auto">
+          <StackPanel Spacing="3">
+            <TextBlock x:Name="PageEyebrow" Text="BEM-VINDO" Foreground="#44D7A8" FontSize="11" FontWeight="Bold" LetterSpacing="2" />
+            <TextBlock x:Name="PageTitle" Text="Seu espaço de estudo" Foreground="#F2F4F7" FontSize="25" FontWeight="Bold" />
+          </StackPanel>
+          <TextBox Grid.Column="1" x:Name="SearchBox" Width="300" VerticalAlignment="Center" PlaceholderText="Buscar no projeto (Ctrl+F)" Padding="12,8" />
+        </Grid>
+      </Border>
+      <Border Grid.Row="1" x:Name="NoticeBorder" Background="#16352D" IsVisible="False" Padding="24,12">
+        <StackPanel Spacing="7">
+          <Grid ColumnDefinitions="*,Auto,Auto">
+            <TextBlock x:Name="NoticeText" Foreground="#A5F4E3" TextWrapping="Wrap" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="1" x:Name="BusyElapsed" Foreground="#A6ADB8" FontSize="12" Margin="12,0" VerticalAlignment="Center" IsVisible="False" />
+            <Button Grid.Column="2" x:Name="CancelOperationButton" Content="Cancelar" IsVisible="False" Padding="12,5" />
+            <Button Grid.Column="2" x:Name="CloseNoticeButton" Content="✕" IsVisible="False" Padding="10,4" Background="Transparent" ToolTip.Tip="Fechar aviso" />
+          </Grid>
+          <ProgressBar x:Name="BusyIndicator" IsVisible="False" IsIndeterminate="True" Height="3" />
+        </StackPanel>
+      </Border>
+      <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Disabled">
+        <ContentControl x:Name="PageContent" Margin="32,28,32,48" />
+      </ScrollViewer>
+    </Grid>
+  </Grid>
+</Window>

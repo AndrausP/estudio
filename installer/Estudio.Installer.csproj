@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>Estudio-Setup</AssemblyName>
+    <ApplicationIcon>..\src\StudyDesk.Desktop\Assets\estudio.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="payload\app.zip" LogicalName="app.zip" Condition="Exists('payload\app.zip')" />
+    <EmbeddedResource Include="..\TERMOS.md" LogicalName="TERMOS.md" />
+    <EmbeddedResource Include="..\src\StudyDesk.Desktop\Assets\estudio.ico" LogicalName="estudio.ico" />
+  </ItemGroup>
+</Project>

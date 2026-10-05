@@ -1,0 +1,96 @@
+{
+  "questions": [
+    {
+      "Kind": 0,
+      "Prompt": "O que é uma variável em C#?",
+      "Options": [
+        {
+          "label": "Um tipo de dado",
+          "value": "1"
+        },
+        {
+          "label": "Um valor específico",
+          "value": "2"
+        },
+        {
+          "label": "Um nome dado a um valor",
+          "value": "3"
+        }
+      ],
+      "CorrectAnswer": "3",
+      "Rubric": "A resposta correta deve ser um nome dado a um valor",
+      "Weight": 20
+    },
+    {
+      "Kind": 1,
+      "Prompt": "Descreva como você identificaria o tipo de uma variável em C#.",
+      "Options": [
+        {
+          "label": "Verificando a declaração da variável",
+          "value": "1"
+        },
+        {
+          "label": "Através do valor atribuído",
+          "value": "2"
+        },
+        {
+          "label": "Verificando o contexto em que a variável é usada",
+          "value": "3"
+        }
+      ],
+      "CorrectAnswer": "1",
+      "Rubric": "A resposta correta deve incluir a verificação da declaração da variável",
+      "Weight": 30
+    },
+    {
+      "Kind": 0,
+      "Prompt": "Quais são os tipos de variáveis em C#?",
+      "Options": [
+        {
+          "label": "Int, Float, String",
+          "value": "1"
+        },
+        {
+          "label": "Int, Float, String, Boolean",
+          "value": "2"
+        },
+        {
+          "label": "Int, Float, String, Boolean, Char",
+          "value": "3"
+        }
+      ],
+      "CorrectAnswer": "3",
+      "Rubric": "A resposta correta deve incluir todos os tipos listados",
+      "Weight": 20
+    },
+    {
+      "Kind": 1,
+      "Prompt": "Descreva uma situação em que você precisaria usar diferentes tipos de variáveis em C#. Explique por que é importante escolher o tipo correto.",
+      "Options": [],
+      "CorrectAnswer": "",
+      "Rubric": "A resposta correta deve incluir uma situação específica e explicação sobre a importância da escolha do tipo correto",
+      "Weight": 30
+    },
+    {
+      "Kind": 0,
+      "Prompt": "Como você faria para declarar uma variável em C#?",
+      "Options": [
+        {
+          "label": "Usando o operador `let`",
+          "value": "1"
+        },
+        {
+          "label": "Usando o operador `var`",
+          "value": "2"
+        },
+        {
+          "label": "Usando a sintaxe `tipo nomeDaVariavel`",
+          "value": "3"
+        }
+      ],
+      "CorrectAnswer": "3",
+      "Rubric": "A resposta correta deve incluir a sintaxe `tipo nomeDaVariavel`",
+      "Weight": 20
+    }
+  ]
+}
