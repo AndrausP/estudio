@@ -74,8 +74,10 @@ public partial class MainWindow : Window
         ProgressButton.Click += (_, _) => Navigate("progress");
         TutorButton.Click += (_, _) => Navigate("tutor");
         FocusButton.Click += (_, _) => Navigate("focus");
+        BoardButton.Click += (_, _) => Navigate("board");
+        ProfileButton.Click += (_, _) => Navigate("profile");
         foreach (var (button, shortcut) in new[] { (HomeButton, "Ctrl+1"), (TrailButton, "Ctrl+2"), (ReviewButton, "Ctrl+3"),
-            (ProgressButton, "Ctrl+4"), (TutorButton, "Ctrl+5"), (FocusButton, "Ctrl+6") })
+            (ProgressButton, "Ctrl+4"), (TutorButton, "Ctrl+5"), (FocusButton, "Ctrl+6"), (BoardButton, "Ctrl+7") })
             ToolTip.SetTip(button, shortcut);
         CancelOperationButton.Click += (_, _) =>
         {
@@ -254,7 +256,7 @@ public partial class MainWindow : Window
             var route = e.Key switch
             {
                 Key.D1 or Key.NumPad1 => "home", Key.D2 or Key.NumPad2 => "trail", Key.D3 or Key.NumPad3 => "review",
-                Key.D4 or Key.NumPad4 => "progress", Key.D5 or Key.NumPad5 => "tutor", Key.D6 or Key.NumPad6 => "focus", _ => null
+                Key.D4 or Key.NumPad4 => "progress", Key.D5 or Key.NumPad5 => "tutor", Key.D6 or Key.NumPad6 => "focus", Key.D7 or Key.NumPad7 => "board", _ => null
             };
             if (e.Key == Key.F) { SearchBox.Focus(); SearchBox.SelectAll(); e.Handled = true; return; }
             if (route is not null && _project is not null) { Navigate(route); e.Handled = true; return; }
@@ -284,6 +286,8 @@ public partial class MainWindow : Window
         ProgressButton.IsEnabled = enabled && _project is not null;
         TutorButton.IsEnabled = enabled && _project is not null;
         FocusButton.IsEnabled = enabled && _project is not null;
+        BoardButton.IsEnabled = enabled && _project is not null;
+        ProfileButton.IsEnabled = enabled;
     }
 
     private void Notice(string message, bool error = false)
@@ -394,6 +398,8 @@ public partial class MainWindow : Window
             case "tutor": ShowTutorPage(); break;
             case "project": ShowProjectSettings(); break;
             case "search": ShowSearch(); break;
+            case "board": ShowBoard(); break;
+            case "profile": ShowProfile(); break;
         }
     }
 
@@ -402,7 +408,7 @@ public partial class MainWindow : Window
         foreach (var (button, route) in new[]
         {
             (HomeButton, "home"), (TrailButton, "trail"), (ReviewButton, "review"), (ProgressButton, "progress"),
-            (TutorButton, "tutor"), (FocusButton, "focus")
+            (TutorButton, "tutor"), (FocusButton, "focus"), (BoardButton, "board")
         })
         {
             var active = _page == route;
@@ -590,7 +596,8 @@ public partial class MainWindow : Window
             Label("01  Conecte o Claude Code CLI ou uma API compatível com OpenAI.", 15),
             Label("02  Defina seu objetivo e responda ao diagnóstico obrigatório.", 15),
             Label("03  Revise a trilha, estude e avance ao atingir 70% na prova.", 15),
-            Actions(ActionButton("Configurar IA", () => Navigate("providers")), ActionButton("Criar projeto", () => Navigate("new"), false)))));
+            Label("Opcional: em “Sobre você” conte quem você é e como aprende; o professor usa isso para falar no seu nível.", 14, Muted),
+            Actions(ActionButton("Configurar IA", () => Navigate("providers")), ActionButton("Sobre você", () => Navigate("profile"), false), ActionButton("Criar projeto", () => Navigate("new"), false)))));
         Display(root);
     }
 

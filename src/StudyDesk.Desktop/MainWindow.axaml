@@ -20,6 +20,7 @@
           <Button x:Name="ProgressButton" Content="▥   Progresso" HorizontalContentAlignment="Left" />
           <Button x:Name="TutorButton" Content="✦   Tutor IA" HorizontalContentAlignment="Left" />
           <Button x:Name="FocusButton" Content="◷   Foco" HorizontalContentAlignment="Left" />
+          <Button x:Name="BoardButton" Content="✎   Lousa" HorizontalContentAlignment="Left" />
         </StackPanel>
         <ScrollViewer Grid.Row="3">
           <StackPanel Spacing="12">
@@ -28,8 +29,9 @@
           </StackPanel>
         </ScrollViewer>
         <StackPanel Grid.Row="4" Spacing="8">
+          <Button x:Name="ProfileButton" Content="☺  Sobre você" HorizontalAlignment="Stretch" />
           <Button x:Name="ProviderButton" Content="⚙  Conexões de IA" HorizontalAlignment="Stretch" />
-          <TextBlock Text="Progresso salvo neste computador, com backup diário automático. · v1.2" Foreground="#A6ADB8" FontSize="11" TextWrapping="Wrap" />
+          <TextBlock Text="Progresso salvo neste computador, com backup diário automático. · v1.5" Foreground="#A6ADB8" FontSize="11" TextWrapping="Wrap" />
         </StackPanel>
       </Grid>
     </Border>

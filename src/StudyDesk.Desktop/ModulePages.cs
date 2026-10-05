@@ -48,6 +48,7 @@ public partial class MainWindow
             root.Children.Add(LessonSection(1, "O que você vai aprender", lesson.Objectives, lesson, progress, progressText));
             root.Children.Add(LessonSection(2, "Entenda o assunto", lesson.Explanation, lesson, progress, progressText));
             root.Children.Add(LessonSection(3, "Exemplos para aplicar", lesson.Examples, lesson, progress, progressText));
+            if (lesson.Boards.Count > 0) root.Children.Add(LessonBoardCard(lesson));
             root.Children.Add(LessonSection(4, "Em resumo", lesson.Summary, lesson, progress, progressText));
             root.Children.Add(Actions(ActionButton("Ir para a prática →", () => Navigate("practice")),
                 ActionButton("Fazer prova", () => Navigate("exam"), false)));

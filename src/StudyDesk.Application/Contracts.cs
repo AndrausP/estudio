@@ -9,7 +9,7 @@ public sealed record Result<T>(bool IsSuccess, T? Value, string? Error)
 }
 
 public sealed record ProviderInput(string Name, ProviderKind Kind, string Endpoint, string Model, string? ApiKey);
-public sealed record CreateProjectInput(string Title, string Goal, string ExplanationStyle, Guid ProviderId);
+public sealed record CreateProjectInput(string Title, string Goal, string ExplanationStyle, Guid ProviderId, string Details = "");
 public sealed record UpdateProjectInput(string Title, string ExplanationStyle, Guid ProviderId);
 
 public interface IAiProvider
@@ -18,7 +18,9 @@ public interface IAiProvider
     /// <summary>Verifica configuração e acesso ao provedor.</summary>
     Task<Result<string>> TestAsync(ProviderConfiguration configuration, string? apiKey, CancellationToken ct = default);
     /// <summary>Gera texto estruturado em JSON.</summary>
-    Task<Result<string>> GenerateJsonAsync(ProviderConfiguration configuration, string? apiKey, string prompt, CancellationToken ct = default);
+    Task<Result<string>> GenerateJsonAsync(ProviderConfiguration configuration, string? apiKey, string prompt, CancellationToken ct = default, IReadOnlyList<string>? imagePaths = null);
+    /// <summary>Lista os modelos disponíveis; vazio quando o provedor não expõe a lista.</summary>
+    Task<Result<IReadOnlyList<string>>> ListModelsAsync(ProviderConfiguration configuration, string? apiKey, CancellationToken ct = default);
 }
 
 public interface IStudyService
@@ -41,6 +43,22 @@ public interface IStudyService
     Task<Result<StudyProject>> UpdateProjectAsync(Guid projectId, UpdateProjectInput input, CancellationToken ct = default);
     /// <summary>Exclui o projeto e suas sessões de foco.</summary>
     Task<Result<bool>> DeleteProjectAsync(Guid projectId, CancellationToken ct = default);
+    /// <summary>Perfil do aluno (vazio se nunca preenchido).</summary>
+    Task<UserProfile> GetProfileAsync(CancellationToken ct = default);
+    /// <summary>Salva o texto sobre o aluno e o resumo que a IA usará como contexto.</summary>
+    Task<Result<UserProfile>> SaveProfileAsync(string about, string summary, CancellationToken ct = default);
+    /// <summary>Pede à IA um resumo curto do aluno a partir do que ele escreveu.</summary>
+    Task<Result<string>> SummarizeProfileAsync(string about, Guid providerId, CancellationToken ct = default);
+    /// <summary>Anexa um arquivo (PDF, Word, Markdown, texto, código ou imagem) ao projeto como material de estudo.</summary>
+    Task<Result<ProjectAttachment>> AddAttachmentAsync(Guid projectId, string filePath, CancellationToken ct = default);
+    /// <summary>Remove um anexo e apaga a cópia local.</summary>
+    Task<Result<bool>> RemoveAttachmentAsync(Guid projectId, Guid attachmentId, CancellationToken ct = default);
+    /// <summary>Altera os detalhes livres que o aluno quer que a IA considere em todo o projeto.</summary>
+    Task<Result<StudyProject>> UpdateProjectDetailsAsync(Guid projectId, string details, CancellationToken ct = default);
+    /// <summary>Pede à IA uma cena de lousa (diagrama ou passo a passo) sobre o pedido do aluno.</summary>
+    Task<Result<WhiteboardScene>> GenerateBoardAsync(Guid projectId, Guid? moduleId, string request, CancellationToken ct = default);
+    /// <summary>Lista modelos de um provedor salvo ou ainda em edição (a chave salva é usada se nenhuma for informada).</summary>
+    Task<Result<IReadOnlyList<string>>> ListModelsAsync(ProviderInput input, Guid? providerId = null, CancellationToken ct = default);
     /// <summary>Gera diagnóstico obrigatório.</summary>
     Task<Result<Diagnostic>> StartDiagnosticAsync(Guid projectId, CancellationToken ct = default);
     /// <summary>Avalia diagnóstico e habilita geração da trilha.</summary>

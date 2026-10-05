@@ -47,6 +47,8 @@ public partial class MainWindow
                 });
             }), ActionButton("Voltar", () => Navigate("home"), false)))));
 
+        root.Children.Add(ProjectMaterialsCard(project));
+
         root.Children.Add(Card(StackWith(
             Label("Caderno de estudo", 19, Ink, FontWeight.Bold),
             Label("Exporte aulas, cartões de revisão e histórico de provas em um arquivo Markdown para ler, imprimir ou guardar fora do aplicativo.", 13, Muted),

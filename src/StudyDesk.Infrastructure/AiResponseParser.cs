@@ -54,7 +54,8 @@ internal static class AiResponseParser
                 Objectives = ReadText(root, "Objectives"),
                 Explanation = ReadText(root, "Explanation"),
                 Examples = ReadText(root, "Examples"),
-                Summary = ReadText(root, "Summary")
+                Summary = ReadText(root, "Summary"),
+                Boards = ReadBoards(root, options)
             };
         return root.Deserialize<T>(options);
     }
@@ -129,6 +130,22 @@ internal static class AiResponseParser
             if (t.Length > 3 && t[0] == '(' && t[2] == ')') return t[3..].Trim();
             return t;
         }
+    }
+
+    /// <summary>Lê as cenas da lousa sem derrubar a aula: cena malformada é descartada.</summary>
+    private static List<WhiteboardScene> ReadBoards(JsonElement lesson, JsonSerializerOptions options)
+    {
+        var boards = new List<WhiteboardScene>();
+        foreach (var property in lesson.EnumerateObject())
+        {
+            if (!property.Name.Equals("Boards", StringComparison.OrdinalIgnoreCase) || property.Value.ValueKind != JsonValueKind.Array) continue;
+            foreach (var element in property.Value.EnumerateArray())
+            {
+                try { if (element.Deserialize<WhiteboardScene>(options) is { } scene) boards.Add(scene); }
+                catch (JsonException) { }
+            }
+        }
+        return boards;
     }
 
     private static JsonElement Read(JsonElement element, string name)

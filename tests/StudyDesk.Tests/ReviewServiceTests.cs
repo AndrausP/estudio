@@ -180,7 +180,7 @@ public sealed class ReviewServiceTests
             accepted?.TrySetResult();
             using var stream = client.GetStream();
             using var reader = new StreamReader(stream, Encoding.ASCII, leaveOpen: true);
-            while (!string.IsNullOrEmpty(await reader.ReadLineAsync())) { }
+            await MockHttp.ReadRequestAsync(reader);
             if (delay is { } wait) await Task.Delay(wait);
             var body = System.Text.Json.JsonSerializer.Serialize(new { choices = new[] { new { message = new { content } } } });
             var bytes = Encoding.UTF8.GetBytes(body);

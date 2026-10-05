@@ -17,6 +17,9 @@ O Estúdio é um aplicativo de estudo para Windows que monta trilhas, aulas, exe
 3.2. Para gerar conteúdo, o texto que você escreve (objetivos, respostas, dúvidas ao tutor, código enviado) e o conteúdo do projeto são ENVIADOS ao provedor de IA configurado. Não envie informações sensíveis, confidenciais, segredos, senhas ou dados pessoais de terceiros.
 3.3. A chave de API, quando usada, é guardada protegida pelo Windows no seu perfil. O Estúdio não a envia a ninguém além do endereço de API que você informou.
 3.4. O tratamento dos dados enviados segue a política de privacidade do provedor escolhido.
+3.5. Arquivos que você anexa a um projeto (PDF, Word, Markdown, texto, código e imagens) são copiados para o seu computador e o TEXTO extraído deles, bem como as imagens, é enviado ao provedor de IA ao gerar diagnóstico, trilha, aulas e exercícios. Anexe apenas o que você tem direito de usar e que possa ser enviado a um serviço de terceiros.
+3.6. O recurso "Sobre você" é opcional. O texto e o resumo ficam salvos apenas neste computador e são incluídos nas solicitações à IA para adaptar o ensino. Você pode editá-lo ou apagá-lo a qualquer momento.
+3.7. O instalador não inclui dados de nenhum usuário: o Estúdio começa vazio em cada computador.
 
 4. QUALIDADE DO CONTEÚDO GERADO POR IA
 Aulas, respostas, gabaritos, notas e correções são produzidos por IA e podem conter erros, imprecisões ou informações desatualizadas. Confira com fontes confiáveis antes de usar o conteúdo como única referência, especialmente em temas de saúde, jurídicos, financeiros ou de segurança. As notas do Estúdio servem apenas para o seu acompanhamento e não têm valor de certificação.

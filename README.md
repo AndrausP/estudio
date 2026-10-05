@@ -11,6 +11,11 @@ Aplicativo de estudo para **Windows** que usa IA para montar a sua trilha: diagn
 - Aulas, prática (texto ou código), provas com nova versão a cada tentativa.
 - Revisão espaçada com cartões gerados após cada aula.
 - Tutor IA, busca (Ctrl+F), foco/Pomodoro, mapa de constância e backups diários.
+- **Material de estudo:** ao criar a trilha (ou depois, em ⚙ Projeto) anexe PDFs, Word, Markdown, texto, código e imagens; a IA usa o conteúdo no diagnóstico, na trilha e nas aulas.
+- **Detalhes por módulo:** diga o que quer em cada módulo (foco, tipo de exemplo, o que evitar), se quer exemplos e se quer a lousa.
+- **Lousa:** quadro para desenhar à mão e pedir diagramas à IA; as aulas trazem cenas da lousa com exemplos. Salva imagem em `Documentos\Estudio`.
+- **Sobre você:** texto livre que a IA resume e passa a usar para entender seu nível e seu jeito de aprender.
+- **Escolha do modelo de IA:** em Conexões de IA, escolha ou digite o modelo (a CLI oferece opus/sonnet/haiku e versões; APIs listam os modelos disponíveis).
 - **Excluir trilha:** botão **✕** ao lado de cada trilha na barra lateral (ou em ⚙ Projeto), com confirmação.
 
 ## Instalação (usuário)
@@ -42,6 +47,9 @@ Execute `Desinstalar.cmd` na pasta de instalação. Remove o programa e os atalh
 
 - Projetos, progresso e cartões: `%LOCALAPPDATA%\Estudio`.
 - Backups diários (7 cópias): `%LOCALAPPDATA%\Estudio\backups`.
+- Arquivos anexados: `%LOCALAPPDATA%\Estudio\attachments`; perfil "Sobre você": `%LOCALAPPDATA%\Estudio\profile.json`.
+
+> O instalador não leva nenhum dado de usuário: o app abre limpo em cada computador.
 - Cadernos exportados: `Documentos\Estudio`.
 
 ## Compilar a partir do código-fonte
@@ -69,7 +77,7 @@ Estrutura:
 | `src/StudyDesk.Domain` | Entidades e regras |
 | `src/StudyDesk.Application` | Contratos e utilitários |
 | `src/StudyDesk.Infrastructure` | IA, banco local (SQLite), exportação, busca |
-| `src/StudyDesk.Desktop` | Interface (Avalonia) |
+| `src/StudyDesk.Desktop` | Interface (Avalonia), lousa e telas |
 | `tests/` | Testes NUnit |
 | `installer/` | Instalador (WinForms) |
 

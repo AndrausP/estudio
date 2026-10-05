@@ -32,6 +32,10 @@ public sealed class StudyProject : BaseEntity
     public Diagnostic? Diagnostic { get; set; }
     public List<StudyModule> Modules { get; set; } = [];
     public int FocusMinutes { get; set; }
+    /// <summary>Material enviado pelo aluno (PDF, Markdown, texto, imagens) usado como contexto da IA.</summary>
+    public List<ProjectAttachment> Attachments { get; set; } = [];
+    /// <summary>Detalhes livres do aluno sobre o que espera deste projeto (nível, prazo, foco, preferências).</summary>
+    public string Details { get; set; } = "";
 
     /// <summary>Confirma a trilha somente após concluir o diagnóstico.</summary>
     public void ConfirmTrail()
@@ -71,6 +75,9 @@ public sealed class StudyProject : BaseEntity
             else module = new StudyModule();
             module.Title = outline.Title.Trim();
             module.Objective = outline.Objective.Trim();
+            module.UserNotes = (outline.Notes ?? "").Trim();
+            module.WantsExamples = outline.WantsExamples;
+            module.WantsWhiteboard = outline.WantsWhiteboard;
             module.Order = next.Count;
             next.Add(module);
         }
@@ -105,7 +112,20 @@ public sealed class StudyProject : BaseEntity
     }
 }
 
-public sealed record ModuleOutline(Guid? Id, string Title, string Objective);
+public sealed record ModuleOutline(Guid? Id, string Title, string Objective, string? Notes = "", bool WantsExamples = true, bool WantsWhiteboard = true);
+
+public enum AttachmentKind { Text, Pdf, Image }
+
+/// <summary>Arquivo anexado a um projeto; o texto extraído (limitado) alimenta a IA e as imagens vão como visão quando o provedor aceita.</summary>
+public sealed class ProjectAttachment : BaseEntity
+{
+    public string FileName { get; set; } = "";
+    public AttachmentKind Kind { get; set; }
+    /// <summary>Caminho relativo à pasta de anexos do projeto.</summary>
+    public string StoredName { get; set; } = "";
+    public long SizeBytes { get; set; }
+    public string ExtractedText { get; set; } = "";
+}
 
 public sealed class Diagnostic : BaseEntity
 {
@@ -120,6 +140,10 @@ public sealed class StudyModule : BaseEntity
     public int Order { get; set; }
     public string Title { get; set; } = "";
     public string Objective { get; set; } = "";
+    /// <summary>O que o aluno quer neste módulo, além do objetivo (foco, nível de detalhe, tipos de exemplo, o que evitar).</summary>
+    public string UserNotes { get; set; } = "";
+    public bool WantsExamples { get; set; } = true;
+    public bool WantsWhiteboard { get; set; } = true;
     public ModuleStatus Status { get; set; } = ModuleStatus.Locked;
     public Lesson? Lesson { get; set; }
     public List<PracticeExercise> Exercises { get; set; } = [];
@@ -136,6 +160,8 @@ public sealed class Lesson : BaseEntity
     public string Explanation { get; set; } = "";
     public string Examples { get; set; } = "";
     public string Summary { get; set; } = "";
+    /// <summary>Cenas da lousa que ilustram a aula (diagramas, fluxos, passo a passo).</summary>
+    public List<WhiteboardScene> Boards { get; set; } = [];
     public int ResumePosition { get; set; }
     public DateTimeOffset? CompletedAtUtc { get; set; }
 }
@@ -359,4 +385,59 @@ public static class StudyStats
         if (attempts.Count == 0) return null;
         return (int)Math.Round(100.0 * attempts.Count(a => a.Grade != ReviewGrade.Wrong) / attempts.Count);
     }
+}
+
+
+/// <summary>Uma cena da lousa: itens posicionados em coordenadas de 0 a 100 (porcentagem da largura e da altura).</summary>
+public sealed class WhiteboardScene
+{
+    public string Title { get; set; } = "";
+    public string Caption { get; set; } = "";
+    public List<BoardItem> Items { get; set; } = [];
+
+    /// <summary>Remove itens inválidos e limita coordenadas e quantidade, pois o JSON vem da IA.</summary>
+    public WhiteboardScene Sanitized()
+    {
+        var kinds = new HashSet<string> { "box", "circle", "arrow", "line", "text", "note" };
+        var clean = new List<BoardItem>();
+        foreach (var item in Items.Take(80))
+        {
+            var kind = (item.Type ?? "").Trim().ToLowerInvariant();
+            if (!kinds.Contains(kind)) continue;
+            clean.Add(new BoardItem
+            {
+                Type = kind,
+                X = Clamp(item.X), Y = Clamp(item.Y), W = Clamp(item.W, 1), H = Clamp(item.H, 1),
+                X2 = Clamp(item.X2), Y2 = Clamp(item.Y2),
+                Text = (item.Text ?? "").Length > 200 ? item.Text![..200] : item.Text ?? "",
+                Color = item.Color ?? ""
+            });
+        }
+        return new WhiteboardScene { Title = Title ?? "", Caption = Caption ?? "", Items = clean };
+    }
+
+    private static double Clamp(double value, double min = 0) => double.IsNaN(value) ? min : Math.Min(100, Math.Max(min, value));
+}
+
+/// <summary>Elemento desenhável. box/circle/note usam X,Y,W,H; text usa X,Y; arrow/line vão de (X,Y) a (X2,Y2).</summary>
+public sealed class BoardItem
+{
+    public string Type { get; set; } = "box";
+    public double X { get; set; }
+    public double Y { get; set; }
+    public double W { get; set; } = 20;
+    public double H { get; set; } = 10;
+    public double X2 { get; set; }
+    public double Y2 { get; set; }
+    public string Text { get; set; } = "";
+    /// <summary>white, yellow, green, blue, red, orange ou purple.</summary>
+    public string Color { get; set; } = "";
+}
+
+/// <summary>Perfil global do aluno: texto livre e o resumo (feito pela IA e editável) que a IA usa para entendê-lo em todos os projetos.</summary>
+public sealed class UserProfile
+{
+    public string About { get; set; } = "";
+    public string Summary { get; set; } = "";
+    public DateTime? UpdatedAt { get; set; }
 }

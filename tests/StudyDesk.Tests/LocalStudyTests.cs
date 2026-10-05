@@ -126,9 +126,7 @@ public sealed class LocalStudyTests
             using var client = await listener.AcceptTcpClientAsync();
             using var stream = client.GetStream();
             using var reader = new StreamReader(stream, Encoding.ASCII, leaveOpen: true);
-            var headers = new List<string>();
-            string? line;
-            while (!string.IsNullOrEmpty(line = await reader.ReadLineAsync())) headers.Add(line);
+            var headers = await MockHttp.ReadRequestAsync(reader);
             var body = "{\"choices\":[{\"message\":{\"content\":\"{\\\"ok\\\":true}\"}}]}";
             var bytes = Encoding.UTF8.GetBytes(body);
             var response = Encoding.ASCII.GetBytes($"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: {bytes.Length}\r\nConnection: close\r\n\r\n");

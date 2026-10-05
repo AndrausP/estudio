@@ -152,7 +152,7 @@ public partial class MainWindow
             return;
         }
         var editable = _project.Modules.OrderBy(m => m.Order)
-            .Select(m => new EditableModule(m.Id, m.Title, m.Objective, m.Status)).ToList();
+            .Select(m => new EditableModule(m.Id, m.Title, m.Objective, m.Status) { Notes = m.UserNotes, WantsExamples = m.WantsExamples, WantsWhiteboard = m.WantsWhiteboard }).ToList();
         RenderTrailEditor(editable);
     }
 
@@ -162,6 +162,9 @@ public partial class MainWindow
         public ModuleStatus Status { get; } = status;
         public string Title { get; set; } = title;
         public string Objective { get; set; } = objective;
+        public string Notes { get; set; } = "";
+        public bool WantsExamples { get; set; } = true;
+        public bool WantsWhiteboard { get; set; } = true;
     }
 
     private void RenderTrailEditor(List<EditableModule> modules)
@@ -172,21 +175,30 @@ public partial class MainWindow
         stack.Children.Add(Label(confirmed
             ? "Módulos iniciados ficam protegidos. Você pode ajustar os próximos módulos e seguir no seu ritmo."
             : "Renomeie, adicione, remova e reorganize os módulos. Confirme quando a trilha fizer sentido para você.", 14, Muted));
-        var inputs = new List<(EditableModule module, TextBox title, TextBox objective)>();
+        var inputs = new List<(EditableModule module, TextBox title, TextBox objective, TextBox notes, CheckBox examples, CheckBox board)>();
         for (var i = 0; i < modules.Count; i++)
         {
             var module = modules[i];
             var locked = confirmed && module.Status is ModuleStatus.InProgress or ModuleStatus.Completed;
             var title = Field(module.Title);
             var objective = Field(module.Objective, multiline: true);
-            title.IsEnabled = objective.IsEnabled = !locked;
+            var notes = Field(module.Notes, "Ex.: quero exemplos do dia a dia, evitar teoria longa, praticar com casos reais, comparar com X…", multiline: true);
+            notes.MinHeight = 80;
+            var examples = new CheckBox { Content = "Quero exemplos práticos", IsChecked = module.WantsExamples };
+            var board = new CheckBox { Content = "Usar a lousa (desenhos e diagramas)", IsChecked = module.WantsWhiteboard };
+            title.IsEnabled = objective.IsEnabled = notes.IsEnabled = examples.IsEnabled = board.IsEnabled = !locked;
+            notes.TextChanged += (_, _) => _trailHasUnsavedEdits = true;
+            examples.IsCheckedChanged += (_, _) => _trailHasUnsavedEdits = true;
+            board.IsCheckedChanged += (_, _) => _trailHasUnsavedEdits = true;
             title.TextChanged += (_, _) => _trailHasUnsavedEdits = true;
             objective.TextChanged += (_, _) => _trailHasUnsavedEdits = true;
-            inputs.Add((module, title, objective));
+            inputs.Add((module, title, objective, notes, examples, board));
             var body = Stack(10);
             body.Children.Add(Label($"MÓDULO {i + 1:00} · {StatusName(module.Status)}", 12, Teal, FontWeight.Bold));
             body.Children.Add(FormField("Título", title));
             body.Children.Add(FormField("Objetivo", objective));
+            body.Children.Add(FormField("O que você quer neste módulo (opcional)", notes, "A IA segue isto ao criar a aula, os exercícios e a prova: foco, tipo de exemplo, nível de detalhe, o que evitar."));
+            body.Children.Add(Actions(examples, board));
             var position = i;
             if (!locked)
             {
@@ -214,7 +226,7 @@ public partial class MainWindow
                 Capture();
                 await RunAsync(async () =>
                 {
-                    var outlines = modules.Select(m => new ModuleOutline(m.Id, m.Title.Trim(), m.Objective.Trim())).ToArray();
+                    var outlines = modules.Select(m => new ModuleOutline(m.Id, m.Title.Trim(), m.Objective.Trim(), m.Notes.Trim(), m.WantsExamples, m.WantsWhiteboard)).ToArray();
                     var result = await _service.SetModulesAsync(_project.Id, outlines);
                     if (!result.IsSuccess) { Notice(result.Error ?? "Não foi possível salvar a trilha.", true); return; }
                     await RefreshProjectAsync(); Navigate("trail"); Notice("Trilha salva.");
@@ -227,7 +239,7 @@ public partial class MainWindow
                     Capture();
                     await RunAsync(async () =>
                     {
-                        var outlines = modules.Select(m => new ModuleOutline(m.Id, m.Title.Trim(), m.Objective.Trim())).ToArray();
+                        var outlines = modules.Select(m => new ModuleOutline(m.Id, m.Title.Trim(), m.Objective.Trim(), m.Notes.Trim(), m.WantsExamples, m.WantsWhiteboard)).ToArray();
                         var saved = await _service.SetModulesAsync(_project.Id, outlines);
                         if (!saved.IsSuccess) { Notice(saved.Error ?? "Não foi possível salvar a trilha.", true); return; }
                         var result = await _service.ConfirmTrailAsync(_project.Id);
@@ -243,6 +255,9 @@ public partial class MainWindow
             {
                 item.module.Title = item.title.Text ?? "";
                 item.module.Objective = item.objective.Text ?? "";
+                item.module.Notes = item.notes.Text ?? "";
+                item.module.WantsExamples = item.examples.IsChecked != false;
+                item.module.WantsWhiteboard = item.board.IsChecked != false;
             }
         }
     }

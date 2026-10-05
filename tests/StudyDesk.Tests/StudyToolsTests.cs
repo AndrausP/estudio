@@ -102,7 +102,7 @@ public sealed class StudyToolsTests
             using var client = await listener.AcceptTcpClientAsync();
             using var stream = client.GetStream();
             using var reader = new StreamReader(stream, Encoding.ASCII, leaveOpen: true);
-            while (!string.IsNullOrEmpty(await reader.ReadLineAsync())) { }
+            await MockHttp.ReadRequestAsync(reader);
             var content = "[{\"Prompt\":\"Exercício antigo\",\"Hint\":\"h\"},{\"Prompt\":\"Exercício novo\",\"Hint\":\"h\"}]";
             var bytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(new { choices = new[] { new { message = new { content } } } }));
             await stream.WriteAsync(Encoding.ASCII.GetBytes($"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: {bytes.Length}\r\nConnection: close\r\n\r\n"));
