@@ -139,19 +139,16 @@ public partial class MainWindow
         Header("Etapa 2 · Trilha", _project.Stage == ProjectStage.Studying ? "Mapa da sua jornada" : "Revise sua trilha antes de começar");
         if (_project.Modules.Count == 0)
         {
-            Display(Card(StackWith(Label("Diagnóstico concluído", 20, Ink, FontWeight.Bold),
-                Label(_project.Diagnostic.Summary, 14, Muted),
-                Label("Agora a IA vai montar módulos alinhados ao seu objetivo.", 14),
-                ActionButton("Gerar trilha", async () =>
+            Display(DiagnosticResultView(_project.Diagnostic.Summary, async () =>
+            {
+                Notice("Montando a trilha de estudo…");
+                await RunAsync(async () =>
                 {
-                    Notice("Montando a trilha de estudo…");
-                    await RunAsync(async () =>
-                    {
-                        var result = await _service.GenerateTrailAsync(_project.Id, Ct);
-                        if (!result.IsSuccess) { Notice(result.Error ?? "Não foi possível gerar a trilha.", true); return; }
-                        await RefreshProjectAsync(); Navigate("trail");
-                    });
-                }))));
+                    var result = await _service.GenerateTrailAsync(_project.Id, Ct);
+                    if (!result.IsSuccess) { Notice(result.Error ?? "Não foi possível gerar a trilha.", true); return; }
+                    await RefreshProjectAsync(); Navigate("trail");
+                });
+            }));
             return;
         }
         var editable = _project.Modules.OrderBy(m => m.Order)
@@ -223,6 +220,7 @@ public partial class MainWindow
                     await RefreshProjectAsync(); Navigate("trail"); Notice("Trilha salva.");
                 });
             }, confirmed),
+            DeleteTrailButton(),
             confirmed ? ActionButton("Voltar ao projeto", () => Navigate("home"), false)
                 : ActionButton("Salvar e iniciar estudos", async () =>
                 {
